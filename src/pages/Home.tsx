@@ -31,10 +31,12 @@ export function Home() {
           </div>
 
           <div className="w-full flex justify-center">
+
             <Button disabled type="submit" className="w-2/5 text-2xl p-4">
               <PlayCircle size={40} />
               <span>Começar</span>
             </Button>
+            
           </div>
         </form>
       </div>
