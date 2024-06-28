@@ -1,0 +1,15 @@
+.homeContainer {
+}
+
+.timerContainer {
+   font-size: 10rem;
+   line-height: 8rem;
+   display: flex;
+   gap: 1rem;
+}
+
+.timerContainer span {
+   background-color: #29292E;
+   padding: 2.5rem 1rem;
+   border-radius: 8px;
+}

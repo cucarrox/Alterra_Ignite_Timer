@@ -2,7 +2,7 @@ import { ButtonHTMLAttributes, FC } from "react";
 import { VariantProps, cva } from "class-variance-authority";
 import { cn } from "@/libs/utils";
 
-const buttonVariants = cva("w-[100px] h-[40px] rounded-[8px] font-bold", {
+const buttonVariants = cva("rounded-[8px] font-bold flex justify-center items-center gap-2 disabled:opacity-[50%] disabled:cursor-not-allowed transition", {
   variants: {
     variant: {
       default: "bg-blueLight hover:bg-blueLightDark text-primaryText",

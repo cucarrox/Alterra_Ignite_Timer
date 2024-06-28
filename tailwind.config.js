@@ -10,7 +10,7 @@ export default {
         primary:       "#29292E",
         secondary:     "#323238",
         primaryText:   "#E1E1E6",
-        secondary:     "#C4C4CC",
+        secondaryText: "#C4C4CC",
         blueLight:     "#2584DC",
         blueLightDark: "#2E6597",
         success:       "#04D361",
