@@ -13,3 +13,7 @@
    padding: 2.5rem 1rem;
    border-radius: 8px;
 }
+
+.task-input::-webkit-calendar-picker-indicator {
+   display: none !important;
+}
