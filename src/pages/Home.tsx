@@ -1,4 +1,4 @@
-import { Button } from "@/components/Button";
+import { Button } from "@/components/ui/Button";
 import { PlayCircle } from "@phosphor-icons/react";
 import styled from "../components/styles/home.module.css";
 
