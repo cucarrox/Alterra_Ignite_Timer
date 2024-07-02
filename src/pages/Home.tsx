@@ -1,19 +1,44 @@
 import { Button } from "@/components/ui/Button";
 import { PlayCircle } from "@phosphor-icons/react";
 import styled from "../components/styles/home.module.css";
+// import { useState } from "react";
+import { useForm } from "react-hook-form";
+
+interface newCycleForm {
+  task: string;
+  minutesAmount: number;
+}
 
 export function Home() {
+
+  const { register, handleSubmit, watch, reset } = useForm<newCycleForm>({
+    defaultValues: {
+      task: '',
+      minutesAmount: 5
+    }
+  })
+
+  function handleCreateNewCycle(data: newCycleForm) {
+    console.log(data)
+    reset()
+  }
+
+  const task = watch("task")
+  const time = watch("minutesAmount")
+  const isSubmitFormButtonDisable = !task || !time
+
   return (
     <>
       <div
         className={`${styled.homeContainer} h-full flex flex-col justify-center items-center text-primaryText`}
       >
         <form
+          onSubmit={handleSubmit(handleCreateNewCycle)}
           action=""
           className="w-full flex flex-col justify-center items-center gap-[3.5rem] flex-wrap font-bold text-[1.125rem]"
         >
           <div className="flex items-center gap-4">
-            <label className="text-2xl" htmlFor="task">
+            <label className="text-xl" htmlFor="task">
               Vou trabalhar em
             </label>
             <input
@@ -21,20 +46,21 @@ export function Home() {
               id="task"
               placeholder="Digite a sua tarefa"
               list="task-suggestion"
+              {...register("task")}
             />
 
-            <label className="text-2xl" htmlFor="minutesAmount">
+            <label className="text-xl" htmlFor="minutesAmount">
               Durante
             </label>
             <input
               className="bg-transparent w-16 h-10 border-0 border-b-2 border-b-primaryText font-bold text-[1.125rem] px-0 py-2 text-primaryText outline-none transition placeholder:text-secondary focus:shadow-none focus:border-blueLight"
               type="number"
-              name=""
               id="minutesAmount"
               placeholder="00"
               step={5}
               min={5}
               max={60}
+              {...register("minutesAmount", { valueAsNumber: true })}
             />
 
             <datalist id="task-suggestion">
@@ -44,7 +70,7 @@ export function Home() {
               <option value="Não fazer nada" />
             </datalist>
 
-            <span className="text-2xl">minutos</span>
+            <span className="text-xl">minutos</span>
           </div>
 
           <div className={`${styled.timerContainer} flex gap-4`}>
@@ -58,7 +84,7 @@ export function Home() {
           </div>
 
           <div className="w-full flex justify-center">
-            <Button type="submit" className="w-2/5 text-2xl p-4">
+            <Button disabled={isSubmitFormButtonDisable} type="submit" className="w-2/5 text-xl p-2">
               <PlayCircle size={40} />
               <span>Começar</span>
             </Button>

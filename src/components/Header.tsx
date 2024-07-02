@@ -6,7 +6,7 @@ import styled from "./styles/header.module.css"
 export function Header() {
   return (
     <>
-      <header className="w-full flex justify-between items-center px-10 py-4 bg-primary">
+      <header className="w-full flex justify-between items-center px-10 py-2 bg-primary">
         <div>
           <img className="w-44" src={alterraStamp} alt="Aterra Logo" />
         </div>
@@ -16,14 +16,14 @@ export function Header() {
             to="/"
             title="Timer"
           >
-            <Timer size={35} />
+            <Timer size={30} />
           </NavLink>
           <NavLink
             className={`${styled.activeted} border-t-2 border-b-2 border-t-transparent border-b-transparent hover:border-b-blueLight transition p-1`}
             to="/history"
             title="Histórico"
           >
-            <Scroll size={35} />
+            <Scroll size={30} />
           </NavLink>
         </nav>
       </header>
