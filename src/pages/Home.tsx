@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/Button";
 import { PlayCircle } from "@phosphor-icons/react";
 import styled from "../components/styles/home.module.css";
-// import { useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 
 interface newCycleForm {
@@ -9,19 +9,49 @@ interface newCycleForm {
   minutesAmount: number;
 }
 
+interface Cycle {
+  id: string,
+  task: string,
+  minutesAmount: number
+}
+
 export function Home() {
+
+  const [cycles, setCycles] = useState<Cycle[]>([])
+  const [activeCycleId, setActiveCycleId] = useState<string | null>((null))
+  const [amountSecondPassed, setAmountSecondPassed] = useState(0)
 
   const { register, handleSubmit, watch, reset } = useForm<newCycleForm>({
     defaultValues: {
       task: '',
-      minutesAmount: 5
+      minutesAmount: 0
     }
   })
 
   function handleCreateNewCycle(data: newCycleForm) {
-    console.log(data)
+    const id = String(new Date().getTime)
+
+    const newCycle: Cycle = {
+      id,
+      task: data.task,
+      minutesAmount: data.minutesAmount
+    }
+
+    setCycles((state) => [...state, newCycle])
+    setActiveCycleId(id)
+
     reset()
   }
+
+  const activeCycle = cycles.find(cycles => cycles.id == activeCycleId)
+  const totalSeconds = activeCycle ? activeCycle.minutesAmount * 60 : 0
+  const currentSeconds = activeCycle ? totalSeconds - amountSecondPassed : 0
+
+  const minutesAmount = Math.floor( currentSeconds / 60 )
+  const secondsAmount = currentSeconds % 60
+
+  const minutes = String(minutesAmount).padStart(2, "0")
+  const seconds = String(secondsAmount).padStart(2, "0")
 
   const task = watch("task")
   const time = watch("minutesAmount")
@@ -74,13 +104,13 @@ export function Home() {
           </div>
 
           <div className={`${styled.timerContainer} flex gap-4`}>
-            <span>0</span>
-            <span>0</span>
+            <span>{minutes[0]}</span>
+            <span>{minutes[1]}</span>
             <span className="!bg-transparent !px-8 !text-blueLight overflow-hidden">
               :
             </span>
-            <span>0</span>
-            <span>0</span>
+            <span>{seconds[0]}</span>
+            <span>{seconds[1]}</span>
           </div>
 
           <div className="w-full flex justify-center">

@@ -1,7 +1,6 @@
 import { Timer, Scroll } from "@phosphor-icons/react";
 import alterraStamp from "../assets/imgs/altrraStamp.png";
 import { NavLink } from "react-router-dom";
-import styled from "./styles/header.module.css"
 
 export function Header() {
   return (
@@ -12,14 +11,14 @@ export function Header() {
         </div>
         <nav className="flex text-primaryText gap-5">
           <NavLink
-            className={`${styled.activeted} border-t-2 border-b-2 border-t-transparent border-b-transparent hover:border-b-blueLight transition p-1 :text-blueLight`}
+            className="border-t-2 border-b-2 border-t-transparent border-b-transparent hover:border-b-blueLight transition p-1 active:text-blueLight"
             to="/"
             title="Timer"
           >
             <Timer size={30} />
           </NavLink>
           <NavLink
-            className={`${styled.activeted} border-t-2 border-b-2 border-t-transparent border-b-transparent hover:border-b-blueLight transition p-1`}
+            className="border-t-2 border-b-2 border-t-transparent border-b-transparent hover:border-b-blueLight transition p-1 active:text-blueLight"
             to="/history"
             title="Histórico"
           >
