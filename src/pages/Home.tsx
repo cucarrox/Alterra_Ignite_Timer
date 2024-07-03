@@ -1,8 +1,12 @@
+// Componentes
 import { Button } from "@/components/ui/Button";
 import { PlayCircle } from "@phosphor-icons/react";
+// Estilo
 import styled from "../components/styles/home.module.css";
-import { useState } from "react";
+// Libs
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { differenceInSeconds } from "date-fns";
 
 interface newCycleForm {
   task: string;
@@ -10,17 +14,20 @@ interface newCycleForm {
 }
 
 interface Cycle {
-  id: string,
-  task: string,
-  minutesAmount: number
+  id: string;
+  task: string;
+  minutesAmount: number;
+  startDate: Date;
 }
 
 export function Home() {
 
+  // useState
   const [cycles, setCycles] = useState<Cycle[]>([])
   const [activeCycleId, setActiveCycleId] = useState<string | null>((null))
-  const [amountSecondPassed, setAmountSecondPassed] = useState(0)
+  const [amountSecondsPassed, setAmountSecondsPassed] = useState(0)
 
+  // react-hook-form, registrar, adicionar, ler, resetar
   const { register, handleSubmit, watch, reset } = useForm<newCycleForm>({
     defaultValues: {
       task: '',
@@ -28,31 +35,55 @@ export function Home() {
     }
   })
 
+  const activeCycle = cycles.find(cycles => cycles.id == activeCycleId)
+
+  useEffect(() => {
+    let interval: number
+    
+    if (activeCycle) {
+      interval = setInterval(() => {
+        setAmountSecondsPassed(
+          differenceInSeconds(new Date(), activeCycle.startDate),
+        )
+      }, 1000)
+    }
+    
+    return () => {
+      clearInterval(interval)
+    }
+  }, [activeCycle])
+
+  // Criar um novo ciclo
   function handleCreateNewCycle(data: newCycleForm) {
     const id = String(new Date().getTime)
 
     const newCycle: Cycle = {
       id,
       task: data.task,
-      minutesAmount: data.minutesAmount
+      minutesAmount: data.minutesAmount,
+      startDate: new Date()
     }
 
     setCycles((state) => [...state, newCycle])
     setActiveCycleId(id)
+    setAmountSecondsPassed(0)
 
     reset()
   }
 
-  const activeCycle = cycles.find(cycles => cycles.id == activeCycleId)
+  //Lógica dos minutos e segundos
   const totalSeconds = activeCycle ? activeCycle.minutesAmount * 60 : 0
-  const currentSeconds = activeCycle ? totalSeconds - amountSecondPassed : 0
+  const currentSeconds = activeCycle ? totalSeconds - amountSecondsPassed : 0
 
+  //Permitir com que os segundos sejam inteiros sempre para baixo
   const minutesAmount = Math.floor( currentSeconds / 60 )
   const secondsAmount = currentSeconds % 60
 
+  //Converter os números para string 
   const minutes = String(minutesAmount).padStart(2, "0")
   const seconds = String(secondsAmount).padStart(2, "0")
 
+  //Função de visualizar e resetar os campos dos inputs
   const task = watch("task")
   const time = watch("minutesAmount")
   const isSubmitFormButtonDisable = !task || !time
@@ -106,9 +137,9 @@ export function Home() {
           <div className={`${styled.timerContainer} flex gap-4`}>
             <span>{minutes[0]}</span>
             <span>{minutes[1]}</span>
-            <span className="!bg-transparent !px-8 !text-blueLight overflow-hidden">
+            <div className="bg-transparent py-8 px-0 w-16 flex justify-center text-blueLight overflow-hidden">
               :
-            </span>
+            </div>
             <span>{seconds[0]}</span>
             <span>{seconds[1]}</span>
           </div>

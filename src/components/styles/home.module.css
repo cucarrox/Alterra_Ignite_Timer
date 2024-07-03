@@ -1,12 +1,12 @@
 .timerContainer {
    font-size: 9rem;
    line-height: 7rem;
-   display: flex;
-   gap: 1rem;
 }
 
 .timerContainer span {
    background-color: #29292E;
+   width: 125px;
+   text-align: center;
    padding: 2.5rem 1rem;
    border-radius: 8px;
 }
