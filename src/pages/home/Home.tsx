@@ -1,8 +1,8 @@
 // Componentes
 import { Button } from "@/components/ui/Button";
-import { PlayCircle } from "@phosphor-icons/react";
+import { PlayCircle, StopCircle } from "@phosphor-icons/react";
 // Estilo
-import styled from "../components/styles/home.module.css";
+import styled from "../home/styles/home.module.css";
 // Libs
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -18,16 +18,18 @@ interface Cycle {
   task: string;
   minutesAmount: number;
   startDate: Date;
+  interruptedDate?: Date;
+  finishedDate?: Date
 }
 
 export function Home() {
 
-  // useState
+  //useState
   const [cycles, setCycles] = useState<Cycle[]>([])
-  const [activeCycleId, setActiveCycleId] = useState<string | null>((null))
+  const [activeCycleId, setActiveCycleId] = useState<string | null>(null)
   const [amountSecondsPassed, setAmountSecondsPassed] = useState(0)
 
-  // react-hook-form, registrar, adicionar, ler, resetar
+  //react-hook-form, registrar, adicionar, ler, resetar
   const { register, handleSubmit, watch, reset } = useForm<newCycleForm>({
     defaultValues: {
       task: '',
@@ -35,25 +37,40 @@ export function Home() {
     }
   })
 
-  const activeCycle = cycles.find(cycles => cycles.id == activeCycleId)
+  const activeCycle = cycles.find(cycles => cycles.id === activeCycleId)
+  const totalSeconds = activeCycle ? activeCycle.minutesAmount * 60 : 0
 
   useEffect(() => {
-    let interval: number
+    let interval: ReturnType<typeof setInterval>
     
     if (activeCycle) {
       interval = setInterval(() => {
-        setAmountSecondsPassed(
-          differenceInSeconds(new Date(), activeCycle.startDate),
-        )
+        const secondsDifference = differenceInSeconds(new Date(), activeCycle.startDate)
+
+        if (secondsDifference >= totalSeconds) {
+          setCycles(
+            (state) => state.map((cycle) => {
+              if (cycle.id == activeCycleId) {
+                return { ...cycle, finishedDate: new Date() }
+              } else {
+                return cycle
+              }
+            }),
+          )
+          setAmountSecondsPassed(totalSeconds)
+          clearInterval(interval)
+        } else {
+          setAmountSecondsPassed(secondsDifference)
+        }
       }, 1000)
     }
     
     return () => {
       clearInterval(interval)
     }
-  }, [activeCycle])
+  }, [activeCycle, totalSeconds])
 
-  // Criar um novo ciclo
+  //Criar um novo ciclo
   function handleCreateNewCycle(data: newCycleForm) {
     const id = String(new Date().getTime)
 
@@ -71,8 +88,21 @@ export function Home() {
     reset()
   }
 
+  function handleInterruptionCycle() {
+    setCycles(
+      (state) => state.map((cycle) => {
+        if (cycle.id == activeCycleId) {
+          return { ...cycle, interruptedDate: new Date() }
+        } else {
+          return cycle
+        }
+      }),
+    )
+
+    setActiveCycleId(null)
+  }
+
   //Lógica dos minutos e segundos
-  const totalSeconds = activeCycle ? activeCycle.minutesAmount * 60 : 0
   const currentSeconds = activeCycle ? totalSeconds - amountSecondsPassed : 0
 
   //Permitir com que os segundos sejam inteiros sempre para baixo
@@ -82,6 +112,15 @@ export function Home() {
   //Converter os números para string 
   const minutes = String(minutesAmount).padStart(2, "0")
   const seconds = String(secondsAmount).padStart(2, "0")
+
+  //Mudar o titulo da aplicação
+  useEffect(() => {
+    if (activeCycle) {
+      document.title = `${minutes}:${seconds}`
+    } else {
+      document.title = "Alterra Ignite"
+    }
+  }, [activeCycle, minutes, seconds])
 
   //Função de visualizar e resetar os campos dos inputs
   const task = watch("task")
@@ -107,6 +146,7 @@ export function Home() {
               id="task"
               placeholder="Digite a sua tarefa"
               list="task-suggestion"
+              disabled={!!activeCycle}
               {...register("task")}
             />
 
@@ -121,6 +161,7 @@ export function Home() {
               step={5}
               min={5}
               max={60}
+              disabled={!!activeCycle}
               {...register("minutesAmount", { valueAsNumber: true })}
             />
 
@@ -145,10 +186,19 @@ export function Home() {
           </div>
 
           <div className="w-full flex justify-center">
-            <Button disabled={isSubmitFormButtonDisable} type="submit" className="w-2/5 text-xl p-2">
-              <PlayCircle size={40} />
-              <span>Começar</span>
-            </Button>
+            {
+              activeCycle ? (
+                <Button onClick={handleInterruptionCycle} variant="warning" type="button" className="w-2/5 text-xl p-2">
+                  <StopCircle size={40} />
+                  <span>Interromper</span>
+                </Button>
+              ) : (
+                <Button disabled={isSubmitFormButtonDisable} type="submit" className="w-2/5 text-xl p-2">
+                  <PlayCircle size={40} />
+                  <span>Começar</span>
+                </Button>
+              )
+            }
           </div>
         </form>
       </div>
