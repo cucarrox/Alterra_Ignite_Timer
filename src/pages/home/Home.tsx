@@ -68,11 +68,11 @@ export function Home() {
     return () => {
       clearInterval(interval)
     }
-  }, [activeCycle, totalSeconds])
+  }, [activeCycle, totalSeconds, activeCycleId])
 
   //Criar um novo ciclo
   function handleCreateNewCycle(data: newCycleForm) {
-    const id = String(new Date().getTime)
+    const id = String(new Date().getTime()) // função
 
     const newCycle: Cycle = {
       id,
@@ -100,6 +100,7 @@ export function Home() {
     )
 
     setActiveCycleId(null)
+    setAmountSecondsPassed(0) //
   }
 
   //Lógica dos minutos e segundos
