@@ -1,4 +1,4 @@
-import { HistoryTable } from "@/components/HistoryTable";
+import { HistoryTable } from "@/pages/history/components/HistoryTable";
 
 export function History() {
    return (
